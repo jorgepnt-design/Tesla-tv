@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#08090d"><title>Tesla TV | IPTV</title>
+<style>
+:root{font-family:Inter,system-ui,-apple-system,Segoe UI,sans-serif;color:#f5f5f7;background:#08090d;color-scheme:dark}*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(circle at 75% 0%,#271217 0,transparent 42%),#08090d}button,input{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:default}
+header{height:82px;padding:0 clamp(18px,4vw,60px);display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #303037}
+.logo{font-size:29px;font-weight:850;letter-spacing:-1.2px}.logo b{color:#ee333b}.muted{color:#aaaab3}.tag{font-size:12px;letter-spacing:2px;text-transform:uppercase;color:#a6a6b1}
+main{max-width:1500px;margin:auto;padding:30px clamp(18px,4vw,56px) 64px}.card{border:1px solid #36343b;border-radius:24px;background:linear-gradient(140deg,#18171d,#101014);padding:clamp(20px,4vw,38px);box-shadow:0 16px 55px #0006}
+h1{font-size:clamp(30px,4vw,48px);margin:14px 0 8px;letter-spacing:-1px}h2{font-size:24px;margin:0 0 12px}p{line-height:1.5}.tabs,.toolbar{display:flex;flex-wrap:wrap;gap:10px}.tabs{background:#25252b;padding:6px;border-radius:15px;margin:28px 0}.tab{flex:1;min-width:145px;background:transparent;border:0;padding:14px;border-radius:11px;color:#aaa;font-weight:700}.tab[aria-selected=true]{background:#db272c;color:white}
+label{display:block;margin:18px 0 8px;color:#b9b8c0;font-size:14px;font-weight:600}input[type=text],input[type=password],input[type=url],input[type=search]{background:#232329;border:1px solid #404048;color:white;padding:16px;width:100%;border-radius:12px;outline:none}input:focus{border-color:#f4474e}
+.primary{background:linear-gradient(95deg,#d71f26,#f44548);border:0;color:white;font-weight:800;padding:17px 25px;border-radius:12px}.secondary{background:#292931;color:#eee;border:1px solid #41414b;padding:12px 18px;border-radius:11px}.primary:hover,.secondary:hover{filter:brightness(1.12)}.wide{width:100%;margin-top:24px}
+.hint{font-size:13px;color:#a7a6af}.error{color:#ff9d9d}.success{color:#8de1ac}.hidden{display:none!important}
+#login{max-width:720px;margin:20px auto}.checkbox{display:flex;align-items:center;gap:10px;margin-top:18px;color:#b9b8c0}
+.grid{display:grid;grid-template-columns:minmax(265px,350px) minmax(0,1fr);gap:20px}.sidebar{height:min(74vh,760px);display:flex;flex-direction:column;min-height:420px}.list{overflow:auto;min-height:0;flex:1}.item,.group{width:100%;text-align:left;display:flex;align-items:center;gap:10px;border:0;border-bottom:1px solid #2b2a32;background:transparent;color:#eee;padding:12px;border-radius:8px}.item:hover,.item.active,.group:hover{background:#312329}.item img{width:37px;height:37px;object-fit:contain;border-radius:4px}.channelname{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.star{border:0;background:none;color:#888;font-size:21px;padding:4px}.star.on{color:#ffc44f}
+video{width:100%;aspect-ratio:16/9;background:#000;border-radius:14px;display:block}.playerbox{min-width:0}.playerbody{padding:24px}.statustext{overflow-wrap:anywhere;font-size:14px}.footer{margin-top:24px;font-size:13px;color:#a3a3ad}.file{margin-top:14px;max-width:100%}
+@media(max-width:850px){header{height:68px}.grid{grid-template-columns:1fr}.sidebar{height:340px;min-height:340px}.playerbox{grid-row:1}.logo{font-size:24px}main{padding:16px}#login{margin:0}.playerbody{padding:16px}}
+</style>
+</head>
+<body>
+<header><div class="logo"><b>TESLA</b> TV</div><div><span class="tag">IPTV WEB PLAYER</span> <button id="logout" class="secondary hidden">Quelle wechseln</button></div></header>
+<main>
+<section id="login" class="card">
+<div class="tag">Xtream Codes · M3U · HLS</div><h1>Fernsehen. Einfach im Browser.</h1><p class="muted">Verbinde eine rechtmäßig nutzbare IPTV-Playlist und wähle deine Sender.</p>
+<div class="tabs" role="tablist"><button class="tab" id="tab-xtream" role="tab" aria-selected="true">Xtream Login</button><button class="tab" id="tab-m3u" role="tab" aria-selected="false">M3U Playlist</button></div>
+<form id="connection">
+<div id="xtreamFields"><label for="server">Server-URL</label><input id="server" type="url" placeholder="https://dein-server.de:443" autocomplete="url"><label for="username">Benutzername</label><input id="username" type="text" autocomplete="username"><label for="password">Passwort</label><input id="password" type="password" autocomplete="current-password"></div>
+<div id="m3uFields" class="hidden"><label for="playlist">M3U / M3U8 Playlist-URL</label><input id="playlist" type="url" placeholder="https://anbieter.de/playlist.m3u"><label for="upload">Oder M3U-Datei lokal auswählen</label><input id="upload" class="file" type="file" accept=".m3u,.m3u8,text/plain,application/x-mpegURL"></div>
+<label class="checkbox"><input id="remember" type="checkbox"> Zugangsdaten in diesem Browser speichern (nicht empfohlen auf gemeinsam genutzten Geräten)</label>
+<button class="primary wide" type="submit" id="connect">Verbinden &amp; ansehen →</button><p id="loginStatus" class="hint" role="status"></p></form>
+<p class="hint">Die Playlist muss HTTPS und Browser-Zugriff (CORS) unterstützen. HTTP-, DRM-geschützte oder inkompatible Streams können im Tesla-Browser nicht abgespielt werden.</p>
+</section>
+<section id="app" class="hidden">
+<div class="grid">
+<aside class="card sidebar"><h2>Sender</h2><input type="search" id="search" placeholder="Sender suchen …" aria-label="Sender suchen"><div class="toolbar" style="margin:12px 0"><button class="secondary" id="all">Alle</button><button class="secondary" id="favorites">★ Favoriten</button></div><div class="list" id="channels"></div><p class="hint" id="counter"></p></aside>
+<div class="card playerbox"><video id="video" controls playsinline preload="none"></video><div class="playerbody"><div class="tag">LIVE TV</div><h2 id="nowPlaying" style="margin-top:10px">Sender auswählen</h2><div class="toolbar"><button class="secondary" id="fullscreen">⛶ Vollbild</button><button class="secondary" id="reload">↻ Neu laden</button></div><p class="muted statustext" id="playerStatus" role="status">Wähle links einen Sender aus.</p><p class="footer">Sicherheit: Videowiedergabe nur im Stand. Bedienung und Unterhaltung dürfen den Fahrer nicht ablenken.</p></div></div>
+</div></section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/hls.js@1.6.13/dist/hls.min.js"></script>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id),state={mode:'xtream',channels:[],filter:'all',selected:null,hls:null,favorites:new Set(JSON.parse(localStorage.getItem('teslatv-favorites')||'[]'))};
+function status(message,isError=false){$('loginStatus').textContent=message;$('loginStatus').className=isError?'hint error':'hint'}
+function playerStatus(message,isError=false){$('playerStatus').textContent=message;$('playerStatus').className=isError?'error statustext':'muted statustext'}
+function mode(which){state.mode=which;$('xtreamFields').classList.toggle('hidden',which!=='xtream');$('m3uFields').classList.toggle('hidden',which!=='m3u');for(const key of ['xtream','m3u'])$('tab-'+key).setAttribute('aria-selected',String(key===which));}
+$('tab-xtream').onclick=()=>mode('xtream');$('tab-m3u').onclick=()=>mode('m3u');
+function parseM3U(text){const lines=text.replace(/\r/g,'').split('\n');const result=[];let meta={};for(const raw of lines){const line=raw.trim();if(line.startsWith('#EXTINF')){const attr=k=>{const m=line.match(new RegExp(k+'="([^"]*)"','i'));return m?m[1]:''};meta={name:line.slice(line.indexOf(',')+1).trim()||'Unbenannt',logo:attr('tvg-logo'),group:attr('group-title')||'Ohne Kategorie'};}else if(line&&!line.startsWith('#')){if(/^https?:\/\//i.test(line))result.push({...meta,name:meta.name||'Sender '+(result.length+1),url:line});meta={};}}return result;}
+function showApp(){if(!state.channels.length)throw Error('Die Playlist enthält keine gültigen HTTP(S)-Sender.');$('login').classList.add('hidden');$('app').classList.remove('hidden');$('logout').classList.remove('hidden');render();}
+async function getText(url){const res=await fetch(url,{signal:AbortSignal.timeout(25000)});if(!res.ok)throw Error('Server antwortet mit HTTP '+res.status);return res.text()}
+$('connection').onsubmit=async e=>{e.preventDefault();$('connect').disabled=true;status('Playlist wird geladen …');try{
+ let content;
+ if(state.mode==='xtream'){const server=$('server').value.trim().replace(/\/+$/,'');const user=$('username').value.trim(),pass=$('password').value;if(!/^https?:\/\//i.test(server)||!user||!pass)throw Error('Bitte Server, Benutzername und Passwort vollständig eingeben.');if(location.protocol==='https:'&&!server.startsWith('https:'))throw Error('Die Xtream-Server-URL muss HTTPS verwenden (Mixed-Content-Sperre).');const url=server+'/get.php?username='+encodeURIComponent(user)+'&password='+encodeURIComponent(pass)+'&type=m3u_plus&output=m3u8';content=await getText(url);
+ if($('remember').checked)localStorage.setItem('teslatv-config',JSON.stringify({mode:'xtream',server,user,pass}));}
+ else{const file=$('upload').files[0],url=$('playlist').value.trim();if(file){content=await file.text()}else{if(!/^https?:\/\//i.test(url))throw Error('Bitte gültige Playlist-URL oder Datei angeben.');if(location.protocol==='https:'&&!url.startsWith('https:'))throw Error('Die Playlist-URL muss HTTPS verwenden.');content=await getText(url)}if($('remember').checked&&!file)localStorage.setItem('teslatv-config',JSON.stringify({mode:'m3u',url}));}
+ if(!$('remember').checked)localStorage.removeItem('teslatv-config');
+ state.channels=parseM3U(content);showApp();status('');
+ }catch(err){status('Verbindung fehlgeschlagen: '+err.message+'. Prüfe HTTPS, CORS und Zugangsdaten.',true)}finally{$('connect').disabled=false}};
+function render(){const q=$('search').value.toLocaleLowerCase();let filtered=state.channels.filter(c=>(state.filter==='all'||state.filter==='fav'&&state.favorites.has(c.url)||state.filter===c.group)&&c.name.toLocaleLowerCase().includes(q));$('counter').textContent=filtered.length+' / '+state.channels.length+' Sender';const root=$('channels');root.replaceChildren();
+const groups=[...new Set(state.channels.map(c=>c.group))].sort();if(state.filter==='all'&&!q){const sel=document.createElement('select');sel.setAttribute('aria-label','Kategorie');sel.style.cssText='width:100%;background:#25252b;color:#fff;border:1px solid #444;border-radius:10px;padding:12px;margin:0 0 8px';sel.add(new Option('Alle Kategorien','all'));for(const group of groups)sel.add(new Option(group,group));sel.onchange=()=>{state.filter=sel.value;render()};root.append(sel)}
+const frag=document.createDocumentFragment();for(const ch of filtered.slice(0,1200)){const b=document.createElement('button');b.className='item'+(state.selected?.url===ch.url?' active':'');b.title=ch.name;
+if(ch.logo&&/^https:\/\//i.test(ch.logo)){const img=document.createElement('img');img.src=ch.logo;img.alt='';img.loading='lazy';img.referrerPolicy='no-referrer';img.onerror=()=>img.remove();b.append(img)}
+const name=document.createElement('span');name.className='channelname';name.textContent=ch.name;b.append(name);b.onclick=()=>play(ch);
+const star=document.createElement('button');star.className='star'+(state.favorites.has(ch.url)?' on':'');star.textContent='★';star.setAttribute('aria-label','Favorit umschalten');star.onclick=e=>{e.stopPropagation();state.favorites.has(ch.url)?state.favorites.delete(ch.url):state.favorites.add(ch.url);localStorage.setItem('teslatv-favorites',JSON.stringify([...state.favorites]));render()};b.append(star);frag.append(b)}root.append(frag);}
+function stop(){if(state.hls){state.hls.destroy();state.hls=null}const v=$('video');v.pause();v.removeAttribute('src');v.load()}
+function play(ch){stop();state.selected=ch;$('nowPlaying').textContent=ch.name;const v=$('video');const url=ch.url;if(location.protocol==='https:'&&url.startsWith('http:')){playerStatus('Dieser Sender verwendet HTTP und wird im HTTPS-Browser blockiert.',true);render();return}
+const isHls=/\.m3u8(?:[?#]|$)/i.test(url)||/output=m3u8/i.test(url);
+if(isHls&&window.Hls&&Hls.isSupported()){const hls=new Hls({enableWorker:true});state.hls=hls;hls.loadSource(url);hls.attachMedia(v);hls.on(Hls.Events.MANIFEST_PARSED,()=>v.play().catch(()=>playerStatus('Zum Starten ▶ im Player drücken.')));hls.on(Hls.Events.ERROR,(_,data)=>{if(data.fatal)playerStatus('Streamfehler: '+data.details+' – bitte URL, Format und CORS prüfen.',true)})}
+else{v.src=url;v.play().catch(()=>playerStatus('Zum Starten ▶ im Player drücken.'));}
+render();}
+$('video').addEventListener('error',()=>playerStatus('Video konnte nicht geladen werden. Format, CORS oder HTTPS prüfen.',true));
+$('search').oninput=render;$('all').onclick=()=>{state.filter='all';render()};$('favorites').onclick=()=>{state.filter='fav';render()};
+$('fullscreen').onclick=()=>{const v=$('video');if(v.requestFullscreen)v.requestFullscreen().catch(()=>playerStatus('Vollbild wird von diesem Browser nicht unterstützt.'));else if(v.webkitEnterFullscreen)v.webkitEnterFullscreen()};
+$('reload').onclick=()=>{if(state.selected)play(state.selected)};
+$('logout').onclick=()=>{stop();state.selected=null;state.channels=[];$('app').classList.add('hidden');$('login').classList.remove('hidden');$('logout').classList.add('hidden')};
+try{const saved=JSON.parse(localStorage.getItem('teslatv-config')||'null');if(saved){mode(saved.mode==='m3u'?'m3u':'xtream');$('remember').checked=true;if(saved.mode==='m3u')$('playlist').value=saved.url||'';else{$('server').value=saved.server||'';$('username').value=saved.user||'';$('password').value=saved.pass||''}}}catch{}
+})();
+</script></body></html>
